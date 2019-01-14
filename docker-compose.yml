@@ -3,5 +3,5 @@ services:
   ivs_regressie_tc_01:
     build: .
     volumes:
-      - ../ini:/var/ini:z
-      - ../logs:/var/logs:z
+      - ./ini:/var/ini:z
+      - ./logs:/var/logs:z
