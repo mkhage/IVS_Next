@@ -25,7 +25,7 @@ class IVSPage(BasePage):
         elem = wait.until(EC.element_to_be_clickable(locator_login))
         elem.click()
         
-    def voorbereiding_brugplanning(self, schip, eni_nummer, vaarrichting):
+    def voorbereiding_brugplanning(self, boot, eni_nummer, vaarrichting):
         WAIT = int(os.environ["web_wait"])
         #WAIT = 30
         wait = WebDriverWait(self.driver, WAIT)
@@ -47,10 +47,10 @@ class IVSPage(BasePage):
         toevoegen = wait.until(EC.element_to_be_clickable(locator_plusje))
         toevoegen.click()
         
-        logging.info("Zoek schip "+schip)
+        logging.info("Zoek boot "+boot)
         locator_zoeken = (By.CSS_SELECTOR, "#vaartuig-search-input")
         elem = wait.until(EC.presence_of_element_located(locator_zoeken))
-        elem.send_keys(schip)
+        elem.send_keys(boot)
         
         locator_window = (By.TAG_NAME, "ivs-overlay-window")
         window = wait.until(EC.presence_of_element_located(locator_window))
@@ -58,22 +58,22 @@ class IVSPage(BasePage):
         locator_sub_venster = (By.CSS_SELECTOR, ".vaartuig-search-result-container")
         venster = wait.until(EC.presence_of_element_located(locator_sub_venster))
         
-        #schepen = []
-        schepen = venster.find_elements_by_css_selector('.vaartuig-identifier')
-        for schip in schepen:
-            if (schip.text == eni_nummer):
-                schip.click()
+        #boten = []
+        boten = venster.find_elements_by_css_selector('.vaartuig-identifier')
+        for boot in boten:
+            if (boot.text == eni_nummer):
+                boot.click()
                 break
                 
-        locator_schip = (By.CSS_SELECTOR,"[type='button'][aria-haspopup='true']")
-        elem = wait.until(EC.presence_of_element_located(locator_schip))
+        locator_boot = (By.CSS_SELECTOR,"[type='button'][aria-haspopup='true']")
+        elem = wait.until(EC.presence_of_element_located(locator_boot))
         
-        logging.info("Zet de status van het schip naar Actueel")
+        logging.info("Zet de status van de boot naar Actueel")
         
         locator_drop_down = (By.CSS_SELECTOR,".controle-and-acties [type='button'][aria-haspopup='true']")
         drop_down = wait.until(EC.presence_of_element_located(locator_drop_down))
         if (drop_down!='Actueel'):
-            logging.info("De status van het schip is niet Actueel")
+            logging.info("De status van de boot is niet Actueel")
             drop_down.click()
             locator_menu = (By.CSS_SELECTOR, '[aria-labelledby="vaarreisSegment-status"]')
             elem = wait.until(EC.presence_of_element_located(locator_menu))
@@ -93,7 +93,7 @@ class IVSPage(BasePage):
            
         locator_positie = (By.CSS_SELECTOR,'#invoeren-positie')
         elem = wait.until(EC.presence_of_element_located(locator_positie))
-        logging.info("De positie van het schip veranderen")
+        logging.info("De positie van de boot veranderen")
         action=ActionChains(driver)
         action.move_to_element(elem).perform()
         elem.click() 

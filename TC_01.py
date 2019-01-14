@@ -7,33 +7,13 @@ import voorbereiding_UI_BP_1
 import uitvoering_UI_BP_1
 import os
 import platform
-import sys
-
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-#from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-#from selenium.webdriver.firefox.webdriver import FirefoxProfile
-
-class Log(object):
-    def __init__(self):
-        self.orgstdout = sys.stdout
-        self.log = open("log.txt", "a")
-
-    def write(self, msg):
-        self.orgstdout.write(msg)
-        self.log.write(msg)  
-
-
-
-
 
 class TestCase_01(unittest.TestCase):
     
-
-    
     def setUp(self):
-        #sys.stdout = Log()
         #print(platform.system())
         
         self.config = configparser.ConfigParser()
@@ -41,21 +21,9 @@ class TestCase_01(unittest.TestCase):
         path_to_log = os.environ["log_path"]
         path_to_ini = os.environ["ini_path"]
         
-        # self.config.read(path_to_ini+"init.ini")
-        self.config.read("init.ini")
+        self.config.read(path_to_ini+"init.ini")
         
         logging.basicConfig(level=logging.INFO, filename=path_to_log+logfile, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        
-#         root = logging.getLogger()
-#         root.setLevel(logging.INFO)
-#         
-#         handler = logging.StreamHandler(sys.stdout)
-#         handler.setLevel(logging.DEBUG)
-#         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#         handler.setFormatter(formatter)
-#         root.addHandler(handler)
-        
-        
         logging.info("Setting up Driver")
         
         chromeOptions = Options()
@@ -66,7 +34,7 @@ class TestCase_01(unittest.TestCase):
         chromeOptions.add_argument('--disable-dev-shm-usage')
         
         if platform.system()=="Windows":
-            self.driver = webdriver.Chrome(chrome_options=chromeOptions) 
+            self.driver = webdriver.Chrome(r"C:/Selenium_Jar_MR/anders/chromedriver.exe",chrome_options=chromeOptions) 
         elif platform.system()=="Linux":
             self.driver = webdriver.Chrome(r"/usr/local/bin/chromedriver",chrome_options=chromeOptions)
         
@@ -101,10 +69,10 @@ class TestCase_01(unittest.TestCase):
         ivs_page = voorbereiding_UI_BP_1.IVSPage(self.driver)
         brug = data_specifiek['object']
         ivs_page.navigate(brug)
-        schip = data_specifiek['test_schip']
+        boot = data_specifiek['test_boot']
         eni_nummer = data_specifiek['eni_nummer']
         vaarrichting = data_specifiek['vaarrichting']
-        ivs_page.voorbereiding_brugplanning(schip,eni_nummer,vaarrichting )
+        ivs_page.voorbereiding_brugplanning(boot,eni_nummer,vaarrichting )
         
     def uitvoering_start(self):
         '''
@@ -125,14 +93,14 @@ class TestCase_01(unittest.TestCase):
         Selecteer uitloggen 
         '''
         data_specifiek = self.config['INITdata_BP_UI_01']
-        schip = data_specifiek['test_schip']
+        boot = data_specifiek['test_boot']
         eni_nummer = data_specifiek['eni_nummer']
 
         ivs_page = uitvoering_UI_BP_1.uitvoering_UI_BP_1(self.driver)
-        ivs_page.new_brugplanning(schip,eni_nummer)
-        ivs_page.sleur_en_pleur(schip,eni_nummer)
-        ivs_page.check(schip,eni_nummer)
-        ivs_page.uitvoeren_brugplanning(schip,eni_nummer)
+        ivs_page.new_brugplanning(boot,eni_nummer)
+        ivs_page.sleur_en_pleur(boot,eni_nummer)
+        ivs_page.check(boot,eni_nummer)
+        ivs_page.uitvoeren_brugplanning(boot,eni_nummer)
         main_page = page.MainPage(self.driver)
         main_page.logout()
         
@@ -170,12 +138,10 @@ if __name__ == '__main__':
     os.environ["ini_path"] = path_to_ini
     os.environ["web_wait"] = '60'
     
-    #sys.stderr = Log()
     logfile = datetime.datetime.today().strftime('%Y%m%d%H%M%S%f') +'.log'
     os.environ["file_log"] = logfile
     log_file = 'log_file.txt'
     f = open(log_file, "a")
-    #@unittest.main()
     runner = unittest.TextTestRunner(f)
     unittest.main(testRunner=runner,exit=False)
     f.close()
